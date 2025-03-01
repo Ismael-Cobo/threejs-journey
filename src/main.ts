@@ -1,16 +1,5 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
-// Cursor
-const cursor = {
-    x: 0,
-    y: 0,
-};
-window.addEventListener("mousemove", (event) => {
-    cursor.x = event.clientX / sizes.width - 0.5;
-    cursor.y = -(event.clientY / sizes.height - 0.5);
-});
-
 /**
  * Base
  */
@@ -19,8 +8,8 @@ const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
 // Sizes
 const sizes = {
-    width: 400,
-    height: 300,
+    width: window.innerWidth,
+    height: window.innerHeight,
 };
 
 // Scene
@@ -57,3 +46,26 @@ const tick = () => {
 };
 
 tick();
+
+window.addEventListener("resize", () => {
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
+
+    // Update aspect ratio
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+
+    // Update renderer size
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+window.addEventListener("dblclick", () => {
+    if (!document.fullscreenElement) {
+        canvas.requestFullscreen();
+        return;
+    }
+    if (!document.exitFullscreen) return;
+
+    document.exitFullscreen();
+});
