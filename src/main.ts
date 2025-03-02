@@ -1,5 +1,13 @@
+import gsap from "gsap";
+import GUI from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+/**
+ * Debug
+ */
+const gui = new GUI();
+const debugObject: any = {};
 /**
  * Base
  */
@@ -11,13 +19,38 @@ const sizes = {
     width: window.innerWidth,
     height: window.innerHeight,
 };
-
 // Scene
 const scene = new THREE.Scene();
 
 // Object
-const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 5, 5, 5), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+debugObject.color = "#3a6ea6";
+debugObject.subdevision = 2;
+const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1, debugObject.subdevision, debugObject.subdevision, debugObject.subdevision),
+    new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: false })
+);
 scene.add(mesh);
+gui.add(mesh.position, "y").min(-3).max(3).step(0.01).name("elevation");
+gui.add(mesh.material, "wireframe").name("wireframe");
+gui.addColor(debugObject, "color")
+    .name("color")
+    .onChange(() => {
+        mesh.material.color.set(debugObject.color);
+    });
+debugObject.spin = () => {
+    gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 });
+};
+
+gui.add(debugObject, "spin");
+gui.add(debugObject, "subdevision")
+    .min(1)
+    .max(50)
+    .step(1)
+    .name("subdevision")
+    .onFinishChange((value: number) => {
+        mesh.geometry.dispose();
+        mesh.geometry = new THREE.BoxGeometry(1, 1, 1, value, value, value);
+    });
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
@@ -58,14 +91,4 @@ window.addEventListener("resize", () => {
     // Update renderer size
     renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
-
-window.addEventListener("dblclick", () => {
-    if (!document.fullscreenElement) {
-        canvas.requestFullscreen();
-        return;
-    }
-    if (!document.exitFullscreen) return;
-
-    document.exitFullscreen();
 });
