@@ -1,10 +1,20 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
 /**
  * Base
  */
 // Canvas
 const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
+
+// Scene
+const scene = new THREE.Scene();
+
+// Object
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
 
 // Sizes
 const sizes = {
@@ -12,17 +22,23 @@ const sizes = {
     height: window.innerHeight,
 };
 
-// Scene
-const scene = new THREE.Scene();
+window.addEventListener("resize", () => {
+    // Update sizes
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
 
-// Object
-const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 5, 5, 5), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-scene.add(mesh);
+    // Update camera
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-camera.position.z = 2;
-camera.lookAt(mesh.position);
+camera.position.z = 3;
 scene.add(camera);
 
 // Controls
@@ -34,8 +50,10 @@ const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
 });
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const tick = () => {
+    // Update controls
     controls.update();
 
     // Render
@@ -46,26 +64,3 @@ const tick = () => {
 };
 
 tick();
-
-window.addEventListener("resize", () => {
-    sizes.width = window.innerWidth;
-    sizes.height = window.innerHeight;
-
-    // Update aspect ratio
-    camera.aspect = sizes.width / sizes.height;
-    camera.updateProjectionMatrix();
-
-    // Update renderer size
-    renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
-
-window.addEventListener("dblclick", () => {
-    if (!document.fullscreenElement) {
-        canvas.requestFullscreen();
-        return;
-    }
-    if (!document.exitFullscreen) return;
-
-    document.exitFullscreen();
-});
