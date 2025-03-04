@@ -1,10 +1,31 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+const imageSource = "/textures/door/color.jpg";
+
+/**
+ * Textures
+ */
+const loadingManager = new THREE.LoadingManager();
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const texture = textureLoader.load(imageSource);
+texture.colorSpace = THREE.SRGBColorSpace;
+// loadingManager.onProgress = (...rest) => {
+//     console.log("On Progress", rest);
+// };
+// loadingManager.onLoad = () => {
+//     console.log("On Load");
+// };
+// centrar la textura al cenmtro para poder rotarla desde el centro
+// y no desde la esquina
+// texture.center.x = 0.5;
+// texture.center.y = 0.5;
+// // rotar 45 grados
+// texture.rotation = Math.PI / 4;
+
 /**
  * Base
  */
-// Canvas
 const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
 // Sizes
@@ -18,7 +39,7 @@ const scene = new THREE.Scene();
 // Object
 const mesh = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: false })
+    new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: false, map: texture })
 );
 scene.add(mesh);
 
