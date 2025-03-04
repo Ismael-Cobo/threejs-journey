@@ -1,28 +1,77 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+/**
+ * Base
+ */
+// Canvas
 const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
 // Scene
 const scene = new THREE.Scene();
 
-// Object
+/**
+ * Object
+ */
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const mesh = new THREE.Mesh(geometry, material);
-
 scene.add(mesh);
 
-// Camera
+/**
+ * Sizes
+ */
 const sizes = {
-    width: 400,
-    height: 300,
+    width: window.innerWidth,
+    height: window.innerHeight,
 };
-// FOV, Aspect Ratio
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.z = 3;
+
+window.addEventListener("resize", () => {
+    // Update sizes
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+camera.position.x = 1;
+camera.position.y = 1;
+camera.position.z = 1;
 scene.add(camera);
 
-// Renderer
-const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+// Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+});
 renderer.setSize(sizes.width, sizes.height);
-renderer.render(scene, camera);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const tick = () => {
+    // Update controls
+    controls.update();
+
+    // Render
+    renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
+};
+
+tick();
