@@ -18,10 +18,27 @@ const scene = new THREE.Scene();
 /**
  * House
  */
-// Temporary sphere
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshStandardMaterial({ roughness: 0.7 }));
-scene.add(sphere);
+// Floor
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshStandardMaterial());
+floor.rotation.x = -(Math.PI * 0.5);
+scene.add(floor);
 
+// House container
+const house = new THREE.Group();
+
+// Walls
+const walls = new THREE.Mesh(new THREE.BoxGeometry(4, 2.5, 4), new THREE.MeshStandardMaterial());
+walls.position.y += walls.geometry.parameters.height / 2;
+house.add(walls);
+
+scene.add(house);
+
+// Roof
+const roof = new THREE.Mesh(new THREE.ConeGeometry(3.5, 1.5, 4), new THREE.MeshStandardMaterial());
+// Wall height + roof height / 2
+roof.position.y = walls.geometry.parameters.height + roof.geometry.parameters.height / 2;
+roof.rotation.y = Math.PI * 0.25;
+scene.add(roof);
 /**
  * Lights
  */
