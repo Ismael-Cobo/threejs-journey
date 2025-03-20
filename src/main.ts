@@ -31,14 +31,65 @@ const walls = new THREE.Mesh(new THREE.BoxGeometry(4, 2.5, 4), new THREE.MeshSta
 walls.position.y += walls.geometry.parameters.height / 2;
 house.add(walls);
 
-scene.add(house);
-
 // Roof
 const roof = new THREE.Mesh(new THREE.ConeGeometry(3.5, 1.5, 4), new THREE.MeshStandardMaterial());
 // Wall height + roof height / 2
 roof.position.y = walls.geometry.parameters.height + roof.geometry.parameters.height / 2;
 roof.rotation.y = Math.PI * 0.25;
-scene.add(roof);
+house.add(roof);
+
+// Door
+const door = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 2.2), new THREE.MeshStandardMaterial());
+door.position.y = 1;
+door.position.z = 2 + 0.001;
+house.add(door);
+
+// Bushes
+const bushGeomtry = new THREE.SphereGeometry(1, 16, 16);
+const bushMaterial = new THREE.MeshStandardMaterial();
+const bush1 = new THREE.Mesh(bushGeomtry, bushMaterial);
+bush1.scale.set(0.5, 0.5, 0.5);
+bush1.position.set(0.8, 0.2, 2.2);
+
+const bush2 = new THREE.Mesh(bushGeomtry, bushMaterial);
+bush2.scale.set(0.25, 0.25, 0.25);
+bush2.position.set(1.4, 0.1, 2.1);
+
+const bush3 = new THREE.Mesh(bushGeomtry, bushMaterial);
+bush3.scale.set(0.4, 0.4, 0.4);
+bush3.position.set(-0.8, 0.1, 2.1);
+
+const bush4 = new THREE.Mesh(bushGeomtry, bushMaterial);
+bush4.scale.set(0.15, 0.15, 0.15);
+bush4.position.set(-1, 0.05, 2.6);
+
+house.add(bush1, bush2, bush3, bush4);
+
+// Graves
+const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.2);
+const gravesMaterial = new THREE.MeshStandardMaterial();
+
+const graves = new THREE.Group();
+scene.add(graves);
+
+for (let i = 0; i < 30; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 3 + Math.random() * 4;
+    const x = Math.sin(angle) * radius;
+    const z = Math.cos(angle) * radius;
+
+    const grave = new THREE.Mesh(graveGeometry, gravesMaterial);
+    grave.position.x = x;
+    grave.position.y = Math.random() * (graveGeometry.parameters.height / 2);
+    grave.position.z = z;
+    grave.rotation.x = (Math.random() - 0.5) * 0.4;
+    grave.rotation.y = (Math.random() - 0.5) * 0.4;
+    grave.rotation.z = (Math.random() - 0.5) * 0.4;
+
+    graves.add(grave);
+}
+
+scene.add(house);
 /**
  * Lights
  */
