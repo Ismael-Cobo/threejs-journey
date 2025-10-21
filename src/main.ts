@@ -25,6 +25,26 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const scene = new THREE.Scene();
 
 /**
+ * Particles
+ */
+// const particlesGeometry = new THREE.SphereGeometry(1, 32, 32);
+const particlesGeometry = new THREE.BufferGeometry();
+const count = 5000;
+const position = new Float32Array(count * 3);
+
+for (let i = 0; i < count * 3; i++) {
+    position[i] = (Math.random() - 0.5) * 10;
+}
+
+const positionAttribute = new THREE.BufferAttribute(position, 3);
+particlesGeometry.setAttribute("position", positionAttribute);
+
+const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.02,
+});
+const particle = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particle);
+/**
  * Lights
  */
 // Ambient light
