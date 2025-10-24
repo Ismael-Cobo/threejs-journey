@@ -88,7 +88,6 @@ controls.enableDamping = true;
  * Animate
  */
 const timer = new THREE.Timer();
-console.log();
 const tick = () => {
     // Timer
     timer.update();
